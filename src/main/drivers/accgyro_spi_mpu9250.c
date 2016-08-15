@@ -46,6 +46,8 @@
 #include "accgyro_mpu.h"
 #include "accgyro_spi_mpu9250.h"
 
+#if defined(USE_GYRO_MPU9250) || defined(USE_ACC_MPU9250)
+
 static void mpu9250AccAndGyroInit(uint8_t lpf);
 
 static bool mpuSpi9250InitDone = false;
@@ -241,3 +243,5 @@ bool mpu9250SpiGyroDetect(gyro_t *gyro)
 
     return true;
 }
+
+#endif

@@ -14,16 +14,21 @@
  * You should have received a copy of the GNU General Public License
  * along with Cleanflight.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#define MPU6500_WHO_AM_I_CONST              (0x70)
-#define MPU9250_WHO_AM_I_CONST              (0x71)
-
-#define MPU6500_BIT_RESET                   (0x80)
-
 #pragma once
 
-bool mpu6500AccDetect(acc_t *acc);
-bool mpu6500GyroDetect(gyro_t *gyro);
+#define ICM20608_WHO_AM_I_CONST             (0xAF)
+#define ICM20608_BIT_RESET                  (0x80)
 
-void mpu6500AccInit(acc_t *acc);
-void mpu6500GyroInit(uint8_t lpf);
+bool icm20608AccDetect(acc_t *acc);
+bool icm20608GyroDetect(gyro_t *gyro);
+
+void icm20608AccInit(acc_t *acc);
+void icm20608GyroInit(uint8_t lpf);
+
+bool icm20608SpiDetect(void);
+
+bool icm20608SpiAccDetect(acc_t *acc);
+bool icm20608SpiGyroDetect(gyro_t *gyro);
+
+bool icm20608WriteRegister(uint8_t reg, uint8_t data);
+bool icm20608ReadRegister(uint8_t reg, uint8_t length, uint8_t *data);
