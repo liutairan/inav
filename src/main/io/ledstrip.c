@@ -511,6 +511,7 @@ typedef enum {
     WARNING_ARMING_DISABLED,
     WARNING_LOW_BATTERY,
     WARNING_FAILSAFE,
+    WARNING_HW_ERROR,
 } warningFlags_e;
 
 static void applyLedWarningLayer(bool updateNow, uint32_t *timer)
@@ -531,6 +532,10 @@ static void applyLedWarningLayer(bool updateNow, uint32_t *timer)
                 warningFlags |= 1 << WARNING_FAILSAFE;
             if (!ARMING_FLAG(ARMED) && !ARMING_FLAG(OK_TO_ARM))
                 warningFlags |= 1 << WARNING_ARMING_DISABLED;
+#ifdef MAG
+            if (masterConfig.mag_hardware != MAG_NONE && !compassIsWorking())
+                warningFlags |= 1 << WARNING_HW_ERROR;
+#endif
         }
         *timer += LED_STRIP_HZ(10);
     }
@@ -550,6 +555,9 @@ static void applyLedWarningLayer(bool updateNow, uint32_t *timer)
                     break;
                 case WARNING_FAILSAFE:
                     warningColor = colorOn ? &HSV(YELLOW) : &HSV(BLUE);
+                    break;
+                case WARNING_HW_ERROR:
+                    warningColor = colorOn ? &HSV(BLUE) : &HSV(BLACK);
                     break;
                 default:;
             }
