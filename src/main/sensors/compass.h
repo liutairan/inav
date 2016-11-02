@@ -37,7 +37,7 @@ bool compassInit(int16_t magDeclinationFromConfig);
 union flightDynamicsTrims_u;
 void updateCompass(uint32_t currentTime, union flightDynamicsTrims_u *magZero);
 bool isCompassReady(void);
-bool compassIsWorking(void);
+bool isCompassHealthy(void);
 
 extern int32_t magADC[XYZ_AXIS_COUNT];
 
