@@ -21,6 +21,7 @@
 #include <platform.h>
 
 #include "build/build_config.h"
+#include "build/debug.h"
 
 #include "barometer.h"
 #include "barometer_spi_ms5611.h"
@@ -68,7 +69,7 @@ bool ms5611Detect(baro_t *baro)
 
 #ifdef USE_BARO_SPI_MS5611
     ms5611SpiInit();
-    ms5611SpiReadRegister(CMD_PROM_RD, 1, &sig);
+    ms5611SpiReadCommand(CMD_PROM_RD, 1, &sig);
     if (sig == 0xFF)
         return false;
 #else
@@ -100,7 +101,7 @@ bool ms5611Detect(baro_t *baro)
 static void ms5611_reset(void)
 {
 #ifdef USE_BARO_SPI_MS5611
-    ms5611SpiWriteRegister(CMD_RESET, 1);
+    ms5611SpiWriteCommand(CMD_RESET, 1);
 #else
     i2cWrite(BARO_I2C_INSTANCE, MS5611_ADDR, CMD_RESET, 1);
 #endif
@@ -111,7 +112,7 @@ static uint16_t ms5611_prom(int8_t coef_num)
 {
     uint8_t rxbuf[2] = { 0, 0 };
 #ifdef USE_BARO_SPI_MS5611
-    ms5611SpiReadRegister(CMD_PROM_RD + coef_num * 2, 2, rxbuf); // send PROM READ command
+    ms5611SpiReadCommand(CMD_PROM_RD + coef_num * 2, 2, rxbuf); // send PROM READ command
 #else
     i2cRead(BARO_I2C_INSTANCE, MS5611_ADDR, CMD_PROM_RD + coef_num * 2, 2, rxbuf); // send PROM READ command
 #endif
@@ -152,7 +153,7 @@ static uint32_t ms5611_read_adc(void)
 {
     uint8_t rxbuf[3];
 #ifdef USE_BARO_SPI_MS5611
-    ms5611SpiReadRegister(CMD_ADC_READ, 3, rxbuf); // read ADC
+    ms5611SpiReadCommand(CMD_ADC_READ, 3, rxbuf); // read ADC
 #else
     i2cRead(BARO_I2C_INSTANCE, MS5611_ADDR, CMD_ADC_READ, 3, rxbuf); // read ADC
 #endif
@@ -162,7 +163,7 @@ static uint32_t ms5611_read_adc(void)
 static void ms5611_start_ut(void)
 {
 #ifdef USE_BARO_SPI_MS5611
-    ms5611SpiWriteRegister(CMD_ADC_CONV + CMD_ADC_D2 + ms5611_osr, 1); // D2 (temperature) conversion start!
+    ms5611SpiWriteCommand(CMD_ADC_CONV + CMD_ADC_D2 + ms5611_osr, 1); // D2 (temperature) conversion start!
 #else
     i2cWrite(BARO_I2C_INSTANCE, MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D2 + ms5611_osr, 1); // D2 (temperature) conversion start!
 #endif
@@ -176,7 +177,7 @@ static void ms5611_get_ut(void)
 static void ms5611_start_up(void)
 {
 #ifdef USE_BARO_SPI_MS5611
-    ms5611SpiWriteRegister(CMD_ADC_CONV + CMD_ADC_D1 + ms5611_osr, 1); // D2 (temperature) conversion start!
+    ms5611SpiWriteCommand(CMD_ADC_CONV + CMD_ADC_D1 + ms5611_osr, 1); // D1 (pressure) conversion start!
 #else
     i2cWrite(BARO_I2C_INSTANCE, MS5611_ADDR, CMD_ADC_CONV + CMD_ADC_D1 + ms5611_osr, 1); // D1 (pressure) conversion start!
 #endif
@@ -212,6 +213,8 @@ STATIC_UNIT_TESTED void ms5611_calculate(int32_t *pressure, int32_t *temperature
     }
     press = ((((int64_t)ms5611_up * sens) >> 21) - off) >> 15;
 
+    debug[0] = ms5611_up;
+    debug[1] = ms5611_ut;
 
     if (pressure)
         *pressure = press;

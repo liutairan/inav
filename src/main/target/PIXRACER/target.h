@@ -70,14 +70,11 @@
 #define GYRO
 #define MAG
 
-
-/*
 #define BARO
 #define USE_BARO_MS5611
 #define USE_BARO_SPI_MS5611
 #define MS5611_CS_PIN               PD7
 #define MS5611_SPI_INSTANCE         SPI2
-*/
 
 /*
 #define USE_SDCARD

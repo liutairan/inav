@@ -33,20 +33,20 @@
 
 static IO_t ms5611CsPin = IO_NONE;
 
-bool ms5611SpiWriteRegister(uint8_t reg, uint8_t data)
+bool ms5611SpiWriteCommand(uint8_t reg, uint8_t data)
 {
     ENABLE_MS5611;
-    spiTransferByte(MS5611_SPI_INSTANCE, reg & 0x7F);
+    spiTransferByte(MS5611_SPI_INSTANCE, reg);
     spiTransferByte(MS5611_SPI_INSTANCE, data);
     DISABLE_MS5611;
 
     return true;
 }
 
-bool ms5611SpiReadRegister(uint8_t reg, uint8_t length, uint8_t *data)
+bool ms5611SpiReadCommand(uint8_t reg, uint8_t length, uint8_t *data)
 {
     ENABLE_MS5611;
-    spiTransferByte(MS5611_SPI_INSTANCE, reg | 0x80); // read transaction
+    spiTransferByte(MS5611_SPI_INSTANCE, reg);
     spiTransfer(MS5611_SPI_INSTANCE, data, NULL, length);
     DISABLE_MS5611;
 
