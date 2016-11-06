@@ -21,7 +21,6 @@
 #include <platform.h>
 
 #include "build/build_config.h"
-#include "build/debug.h"
 
 #include "barometer.h"
 #include "barometer_spi_ms5611.h"
@@ -212,9 +211,6 @@ STATIC_UNIT_TESTED void ms5611_calculate(int32_t *pressure, int32_t *temperature
     temp -= ((dT * dT) >> 31);
     }
     press = ((((int64_t)ms5611_up * sens) >> 21) - off) >> 15;
-
-    debug[0] = ms5611_up;
-    debug[1] = ms5611_ut;
 
     if (pressure)
         *pressure = press;
