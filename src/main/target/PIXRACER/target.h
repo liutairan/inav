@@ -71,10 +71,15 @@
 #define MAG
 
 
-//#define BARO
-//#define USE_BARO_MS5611
-//#define MS5611_I2C_INSTANCE     I2CDEV_1
+/*
+#define BARO
+#define USE_BARO_MS5611
+#define USE_BARO_SPI_MS5611
+#define MS5611_CS_PIN               PD7
+#define MS5611_SPI_INSTANCE         SPI2
+*/
 
+/*
 #define USE_SDCARD
 
 #define SDCARD_SPI_INSTANCE                 SPI3
@@ -85,11 +90,11 @@
 // Divide to under 25MHz for normal operation:
 #define SDCARD_SPI_FULL_SPEED_CLOCK_DIVIDER     4 // 21MHz
 
-/* ***PR wonders - stock from Bluejay target *** */
 #define SDCARD_DMA_CHANNEL_TX               DMA1_Stream5
 #define SDCARD_DMA_CHANNEL_TX_COMPLETE_FLAG DMA_FLAG_TCIF5
 #define SDCARD_DMA_CLK                      RCC_AHB1Periph_DMA1
 #define SDCARD_DMA_CHANNEL                  DMA_Channel_0
+*/
 
 #define USABLE_TIMER_CHANNEL_COUNT 7
 
@@ -136,17 +141,16 @@
 
 #define USE_SPI
 
-#define USE_SPI_DEVICE_1
+#define USE_SPI_DEVICE_1        // Acc/Gyro/Compass
 #define SPI1_NSS_PIN            PC2
 #define SPI1_SCK_PIN            PA5
 #define SPI1_MISO_PIN           PA6
 #define SPI1_MOSI_PIN           PA7
 
-#define USE_SPI_DEVICE_3
-#define SPI3_NSS_PIN            PB3
-#define SPI3_SCK_PIN            PC10
-#define SPI3_MISO_PIN           PC11
-#define SPI3_MOSI_PIN           PC12
+#define USE_SPI_DEVICE_2        // FRAM/BARO
+#define SPI2_SCK_PIN            PB10
+#define SPI2_MISO_PIN           PB14
+#define SPI2_MOSI_PIN           PB15
 
 #define USE_I2C
 #define I2C_DEVICE              (I2CDEV_1)

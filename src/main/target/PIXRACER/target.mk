@@ -6,4 +6,6 @@ HSE_VALUE = 24000000
 TARGET_SRC = \
             drivers/accgyro_spi_mpu9250.c \
             drivers/accgyro_spi_icm20608.c \
+            drivers/barometer_ms5611.c \
+            drivers/barometer_spi_ms5611.c \
             drivers/compass_ak8963.c
