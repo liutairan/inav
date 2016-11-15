@@ -70,6 +70,7 @@
 #include "rx/spektrum.h"
 
 #include "sensors/battery.h"
+#include "sensors/diagnostics.h"
 #include "sensors/boardalignment.h"
 #include "sensors/sensors.h"
 #include "sensors/acceleration.h"
@@ -238,6 +239,11 @@ static const char * const sensorTypeNames[] = {
 };
 
 #define SENSOR_NAMES_MASK (SENSOR_GYRO | SENSOR_ACC | SENSOR_BARO | SENSOR_MAG | SENSOR_SONAR | SENSOR_PITOT)
+
+static const char * const hardwareSensorStatusNames[] = {
+    "NONE", "OK", "UNAVAILABLE", "FAILING"
+};
+
 // sync with gyroSensor_e
 static const char * const gyroNames[] = { "", "None", "MPU6050", "L3G4200D", "MPU3050", "L3GD20", "MPU6000", "MPU6500", "MPU9250", "FAKE"};
 // sync with accelerationSensor_e
@@ -2862,8 +2868,18 @@ static void cliStatus(char *cmdline)
             }
         }
     }
-#endif
     cliPrint("\r\n");
+
+    cliPrintf("Sensor status: GYRO=%s, ACC=%s, MAG=%s, BARO=%s, SONAR=%s, GPS=%s\r\n", 
+        hardwareSensorStatusNames[getHwGyroStatus()],
+        hardwareSensorStatusNames[getHwAccelerometerStatus()],
+        hardwareSensorStatusNames[getHwCompassStatus()],
+        hardwareSensorStatusNames[getHwBarometerStatus()],
+        hardwareSensorStatusNames[getHwRangefinderStatus()],
+        hardwareSensorStatusNames[getHwGPSStatus()]
+    );
+    
+#endif
 
 #ifdef USE_I2C
     const uint16_t i2cErrorCounter = i2cGetErrorCounter();
