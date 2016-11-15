@@ -454,4 +454,8 @@ bool gpsMagDetect(mag_t *mag)
     return true;
 }
 
+bool isGPSHealthy(void)
+{
+    return true;
+}
 #endif
