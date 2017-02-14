@@ -19,23 +19,14 @@
 
 #include <stdint.h>
 
-void taskMainPidLoopChecker(void);
-void taskHandleSerial(void);
-void taskUpdateBeeper(void);
-void taskUpdateBattery(void);
-bool taskUpdateRxCheck(uint32_t currentDeltaTime);
-void taskUpdateRxMain(void);
-void taskProcessGPS(void);
-void taskUpdateCompass(void);
-void taskUpdateBaro(void);
-void taskUpdateSonar(void);
-void taskUpdateDisplay(void);
-void taskTelemetry(void);
-void taskLedStrip(void);
-void taskSystem(void);
-#ifdef USE_PMW_SERVO_DRIVER
-void taskSyncPwmDriver(void);
-#endif
-void taskStackCheck(void);
+#include "common/time.h"
+
+void taskMainPidLoopChecker(timeUs_t currentTimeUs);
+bool taskUpdateRxCheck(timeUs_t currentTimeUs, uint32_t currentDeltaTime);
+void taskUpdateRxMain(timeUs_t currentTimeUs);
+void taskSystem(timeUs_t currentTimeUs);
+
+void taskMainPidLoop(timeUs_t currentTimeUs);
+void taskGyro(timeUs_t currentTimeUs);
 
 void fcTasksInit(void);

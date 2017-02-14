@@ -23,31 +23,26 @@
 #include "platform.h"
 #include "build/debug.h"
 
-
-#include "build/build_config.h"
-
-
 #include "common/axis.h"
-#include "common/maths.h"
 #include "common/filter.h"
+#include "common/maths.h"
+#include "common/utils.h"
 
 #include "drivers/system.h"
 #include "drivers/pwm_output.h"
 #include "drivers/pwm_mapping.h"
-#include "drivers/sensor.h"
-#include "drivers/accgyro.h"
-#include "drivers/system.h"
 
 #include "rx/rx.h"
 
 #include "io/gimbal.h"
 #include "io/motors.h"
-#include "fc/rc_controls.h"
-
 
 #include "sensors/sensors.h"
 #include "sensors/acceleration.h"
 #include "sensors/gyro.h"
+
+#include "fc/rc_controls.h"
+#include "fc/runtime_config.h"
 
 #include "flight/mixer.h"
 #include "flight/servos.h"
@@ -55,8 +50,6 @@
 #include "flight/pid.h"
 #include "flight/imu.h"
 #include "flight/navigation_rewrite.h"
-
-#include "fc/runtime_config.h"
 
 #include "config/config.h"
 #include "config/config_profile.h"
@@ -503,8 +496,8 @@ void mixTable(void)
             }
 
             // Motor stop handling
-            if (feature(FEATURE_MOTOR_STOP) && ARMING_FLAG(ARMED) && !feature(FEATURE_3D)) {
-                if (((rcData[THROTTLE]) < rxConfig->mincheck)) {
+            if (feature(FEATURE_MOTOR_STOP) && ARMING_FLAG(ARMED) && !feature(FEATURE_3D) && !isFailsafeActive) {
+                if (((rcData[THROTTLE]) < rxConfig->mincheck) || STATE(NAV_MOTOR_STOP_OR_IDLE)) {
                     motor[i] = motorConfig->mincommand;
                 }
             }
@@ -515,4 +508,3 @@ void mixTable(void)
         }
     }
 }
-

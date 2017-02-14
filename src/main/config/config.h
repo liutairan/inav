@@ -20,14 +20,25 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#if FLASH_SIZE <= 128
-#define MAX_PROFILE_COUNT 2
-#else
 #define MAX_PROFILE_COUNT 3
-#endif
 #define MAX_CONTROL_RATE_PROFILE_COUNT 3
 #define ONESHOT_FEATURE_CHANGED_DELAY_ON_BOOT_MS 1500
+#define MAX_NAME_LENGTH 16
 
+#define ACC_TASK_FREQUENCY_DEFAULT 500
+#define ACC_TASK_FREQUENCY_MIN 100
+#define ACC_TASK_FREQUENCY_MAX 1000
+#define ATTITUDE_TASK_FREQUENCY_DEFAULT 250
+#define ATTITUDE_TASK_FREQUENCY_MIN 100
+#define ATTITUDE_TASK_FREQUENCY_MAX 1000
+
+#ifdef ASYNC_GYRO_PROCESSING
+typedef enum {
+    ASYNC_MODE_NONE,
+    ASYNC_MODE_GYRO,
+    ASYNC_MODE_ALL
+} asyncMode_e;
+#endif
 
 typedef enum {
     FEATURE_RX_PPM = 1 << 0,
@@ -47,7 +58,7 @@ typedef enum {
     FEATURE_RX_MSP = 1 << 14,
     FEATURE_RSSI_ADC = 1 << 15,
     FEATURE_LED_STRIP = 1 << 16,
-    FEATURE_DISPLAY = 1 << 17,
+    FEATURE_DASHBOARD= 1 << 17,
     FEATURE_UNUSED_2 = 1 << 18,         // Unused in INAV
     FEATURE_BLACKBOX = 1 << 19,
     FEATURE_CHANNEL_FORWARDING = 1 << 20,
@@ -58,11 +69,9 @@ typedef enum {
     FEATURE_RX_SPI = 1 << 25,
     FEATURE_SOFTSPI = 1 << 26,
     FEATURE_PWM_SERVO_DRIVER = 1 << 27,
+    FEATURE_PWM_OUTPUT_ENABLE = 1 << 28,
+    FEATURE_OSD = 1 << 29,
 } features_e;
-
-typedef enum {
-    FLAG_MAG_CALIBRATION_DONE = 1 << 0,
-} persistent_flags_e;
 
 void beeperOffSet(uint32_t mask);
 void beeperOffSetAll(uint8_t beeperCount);
@@ -72,11 +81,6 @@ uint32_t getBeeperOffMask(void);
 void setBeeperOffMask(uint32_t mask);
 uint32_t getPreferredBeeperOffMask(void);
 void setPreferredBeeperOffMask(uint32_t mask);
-
-bool persistentFlag(uint8_t mask);
-void persistentFlagSet(uint8_t mask);
-void persistentFlagClear(uint8_t mask);
-void persistentFlagClearAll();
 
 void copyCurrentProfileToProfileSlot(uint8_t profileSlotIndex);
 
@@ -105,3 +109,10 @@ uint16_t getCurrentMinthrottle(void);
 struct master_s;
 void targetConfiguration(struct master_s *config);
 
+#ifdef ASYNC_GYRO_PROCESSING
+uint32_t getPidUpdateRate(void);
+uint32_t getGyroUpdateRate(void);
+uint16_t getAccUpdateRate(void);
+uint16_t getAttitudeUpdateRate(void);
+uint8_t getAsyncMode(void);
+#endif

@@ -19,8 +19,6 @@
 
 #define TARGET_BOARD_IDENTIFIER "ANYF"
 
-#define CONFIG_START_FLASH_ADDRESS (0x08080000) //0x08080000 to 0x080A0000 (FLASH_Sector_8)
-
 #define USBD_PRODUCT_STRING     "AnyFC"
 
 #define LED0                    PB7
@@ -97,14 +95,12 @@
 #define USE_I2C
 #define I2C_DEVICE              (I2CDEV_1)
 #define I2C_DEVICE_EXT          (I2CDEV_2)
+#define I2C_DEVICE_EXT_SHARES_UART3
+//#define USE_I2C_PULLUP
 
 //#define HIL
 
 #define MAG_GPS_ALIGN           CW180_DEG_FLIP
-
-#define NAV
-#define NAV_AUTO_MAG_DECLINATION
-#define NAV_GPS_GLITCH_DETECTION
 
 #define USE_ADC
 #define VBAT_ADC_PIN            PC0

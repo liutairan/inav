@@ -32,12 +32,7 @@
 #include "common/axis.h"
 
 #include "drivers/system.h"
-#include "drivers/sensor.h"
-#include "drivers/accgyro.h"
-#include "drivers/gpio.h"
-#include "drivers/timer.h"
 #include "drivers/serial.h"
-
 
 #include "sensors/sensors.h"
 #include "sensors/acceleration.h"
@@ -169,16 +164,16 @@ static void sendAccel(void)
 
     for (i = 0; i < 3; i++) {
         sendDataHead(ID_ACC_X + i);
-        serialize16(accADC[i] * 1000 / acc.acc_1G);
+        serialize16(acc.accADC[i] * 1000 / acc.dev.acc_1G);
     }
 }
 
 static void sendBaro(void)
 {
     sendDataHead(ID_ALTITUDE_BP);
-    serialize16(BaroAlt / 100);
+    serialize16(baro.BaroAlt / 100);
     sendDataHead(ID_ALTITUDE_AP);
-    serialize16(ABS(BaroAlt % 100));
+    serialize16(ABS(baro.BaroAlt % 100));
 }
 
 #ifdef GPS
@@ -215,7 +210,7 @@ static void sendTemperature1(void)
 {
     sendDataHead(ID_TEMPRATURE1);
 #ifdef BARO
-    serialize16((baroTemperature + 50)/ 100); //Airmamaf
+    serialize16((baro.baroTemperature + 50)/ 100); //Airmamaf
 #else
     serialize16(telemTemperature1 / 10);
 #endif
@@ -412,11 +407,16 @@ static void sendVoltageAmp(void)
         serialize16(vbat);
     } else {
         uint16_t voltage = (vbat * 110) / 21;
-
+        uint16_t vfasVoltage;
+        if (telemetryConfig->frsky_vfas_cell_voltage) {
+            vfasVoltage = voltage / batteryCellCount;
+        } else {
+            vfasVoltage = voltage;
+        }
         sendDataHead(ID_VOLTAGE_AMP_BP);
-        serialize16(voltage / 100);
+        serialize16(vfasVoltage / 100);
         sendDataHead(ID_VOLTAGE_AMP_AP);
-        serialize16(((voltage % 100) + 5) / 10);
+        serialize16(((vfasVoltage % 100) + 5) / 10);
     }
 }
 

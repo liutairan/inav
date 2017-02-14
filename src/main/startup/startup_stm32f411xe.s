@@ -72,6 +72,15 @@ defined in linker script */
   .weak  Reset_Handler
   .type  Reset_Handler, %function
 Reset_Handler: 
+  // Enable CCM
+  // RCC->AHB1ENR |= RCC_AHB1ENR_CCMDATARAMEN;
+  ldr     r0, =0x40023800       // RCC_BASE
+  ldr     r1, [r0, #0x30]       // AHB1ENR
+  orr     r1, r1, 0x00100000    // RCC_AHB1ENR_CCMDATARAMEN
+  str     r1, [r0, #0x30]
+  dsb
+
+  // Check for bootloader reboot
   ldr r0, =0x2001FFFC         // mj666
   ldr r1, =0xDEADBEEF         // mj666
   ldr r2, [r0, #0]            // mj666
@@ -164,17 +173,13 @@ Infinite_Loop:
 * 0x0000.0000.
 *
 *******************************************************************************/
-  .section  .irqstack,"aw",%progbits
-  irq_stack:
-  .space  1024
-
   .section  .isr_vector,"a",%progbits
   .type  g_pfnVectors, %object
   .size  g_pfnVectors, .-g_pfnVectors
    
 
 g_pfnVectors:
-  .word  irq_stack+1024
+  .word  _estack
   .word  Reset_Handler
   .word  NMI_Handler
   .word  HardFault_Handler

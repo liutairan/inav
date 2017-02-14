@@ -67,9 +67,11 @@ typedef struct uartDevice_s {
 static uartDevice_t uart1 =
 {
     .DMAChannel = DMA_Channel_4,
-    .txDMAStream = DMA2_Stream7,
 #ifdef USE_UART1_RX_DMA
     .rxDMAStream = DMA2_Stream5,
+#endif
+#ifdef USE_UART1_TX_DMA
+    .txDMAStream = DMA2_Stream7,
 #endif
     .dev = USART1,
     .rx = IO_TAG(UART1_RX_PIN),
@@ -93,7 +95,9 @@ static uartDevice_t uart2 =
 #ifdef USE_UART2_RX_DMA
     .rxDMAStream = DMA1_Stream5,
 #endif
+#ifdef USE_UART2_TX_DMA
     .txDMAStream = DMA1_Stream6,
+#endif
     .dev = USART2,
     .rx = IO_TAG(UART2_RX_PIN),
     .tx = IO_TAG(UART2_TX_PIN),
@@ -116,7 +120,9 @@ static uartDevice_t uart3 =
 #ifdef USE_UART3_RX_DMA
     .rxDMAStream = DMA1_Stream1,
 #endif
+#ifdef USE_UART3_TX_DMA
     .txDMAStream = DMA1_Stream3,
+#endif
     .dev = USART3,
     .rx = IO_TAG(UART3_RX_PIN),
     .tx = IO_TAG(UART3_TX_PIN),
@@ -136,10 +142,12 @@ static uartDevice_t uart3 =
 static uartDevice_t uart4 =
 {
     .DMAChannel = DMA_Channel_4,
-#ifdef USE_UART1_RX_DMA
+#ifdef USE_UART4_RX_DMA
     .rxDMAStream = DMA1_Stream2,
 #endif
+#ifdef USE_UART4_TX_DMA
     .txDMAStream = DMA1_Stream4,
+#endif
     .dev = UART4,
     .rx = IO_TAG(UART4_RX_PIN),
     .tx = IO_TAG(UART4_TX_PIN),
@@ -159,10 +167,12 @@ static uartDevice_t uart4 =
 static uartDevice_t uart5 =
 {
     .DMAChannel = DMA_Channel_4,
-#ifdef USE_UART1_RX_DMA
+#ifdef USE_UART5_RX_DMA
     .rxDMAStream = DMA1_Stream0,
 #endif
-    .txDMAStream = DMA2_Stream7,
+#ifdef USE_UART5_TX_DMA
+    .txDMAStream = DMA1_Stream7,
+#endif
     .dev = UART5,
     .rx = IO_TAG(UART5_RX_PIN),
     .tx = IO_TAG(UART5_TX_PIN),
@@ -171,7 +181,7 @@ static uartDevice_t uart5 =
     .rcc_ahb1 = UART5_AHB1_PERIPHERALS,
 #endif
     .rcc_apb1 = RCC_APB1(UART5),
-    .txIrq = DMA2_ST7_HANDLER,
+    .txIrq = DMA1_ST7_HANDLER,
     .rxIrq = UART5_IRQn,
     .txPriority = NVIC_PRIO_SERIALUART5_TXDMA,
     .rxPriority = NVIC_PRIO_SERIALUART5
@@ -185,7 +195,9 @@ static uartDevice_t uart6 =
 #ifdef USE_UART6_RX_DMA
     .rxDMAStream = DMA2_Stream1,
 #endif
+#ifdef USE_UART6_RX_DMA
     .txDMAStream = DMA2_Stream6,
+#endif
     .dev = USART6,
     .rx = IO_TAG(UART6_RX_PIN),
     .tx = IO_TAG(UART6_TX_PIN),
@@ -260,6 +272,7 @@ void uartIrqHandler(uartPort_t *s)
     }
 }
 
+#if defined(USE_UART1_TX_DMA) || defined(USE_UART2_TX_DMA) || defined(USE_UART3_TX_DMA) || defined(USE_UART4_TX_DMA) || defined(USE_UART5_TX_DMA) || defined(USE_UART6_TX_DMA)
 static void handleUsartTxDma(uartPort_t *s)
 {
     DMA_Cmd(s->txDMAStream, DISABLE);
@@ -292,6 +305,7 @@ void dmaIRQHandler(dmaChannelDescriptor_t* descriptor)
         DMA_CLEAR_FLAG(descriptor, DMA_IT_DMEIF);
     }
 }
+#endif
 
 uartPort_t *serialUART(UARTDevice device, uint32_t baudRate, portMode_t mode, portOptions_t options)
 {
@@ -350,8 +364,10 @@ uartPort_t *serialUART(UARTDevice device, uint32_t baudRate, portMode_t mode, po
         }
     }
 
+#if defined(USE_UART1_TX_DMA) || defined(USE_UART2_TX_DMA) || defined(USE_UART3_TX_DMA) || defined(USE_UART4_TX_DMA) || defined(USE_UART5_TX_DMA) || defined(USE_UART6_TX_DMA)
     // DMA TX Interrupt
     dmaSetHandler(uart->txIrq, dmaIRQHandler, uart->txPriority, (uint32_t)uart);
+#endif
 
     if (!(s->rxDMAChannel)) {
         NVIC_InitStructure.NVIC_IRQChannel = uart->rxIrq;

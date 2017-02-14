@@ -53,9 +53,6 @@
 #define MPU6500_CS_PIN          SPI2_NSS_PIN
 #define MPU6500_SPI_INSTANCE    SPI2
 #define GYRO_MPU6500_ALIGN      CW270_DEG_FLIP
-#define USE_GYRO_SPI_MPU9250
-#define MPU9250_CS_PIN          SPI2_NSS_PIN
-#define MPU9250_SPI_INSTANCE    SPI2
 
 #define ACC
 #define USE_FAKE_ACC
@@ -68,8 +65,6 @@
 #define USE_ACC_SPI_MPU6000
 #define USE_ACC_MPU6500
 #define USE_ACC_SPI_MPU6500
-#define USE_ACC_MPU9250
-#define USE_ACC_SPI_MPU9250
 #define ACC_MPU6500_ALIGN       CW270_DEG_FLIP
 
 #define BARO
@@ -84,6 +79,10 @@
 #define USE_MAG_AK8975
 #define USE_MAG_HMC5883
 #define USE_MAG_MAG3110
+
+#define PITOT
+#define USE_PITOT_MS4525
+#define PITOT_I2C_INSTANCE I2C_DEVICE
 
 #define USE_VCP
 #define USE_UART1

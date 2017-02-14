@@ -17,9 +17,6 @@
 
 #pragma once
 #define TARGET_BOARD_IDENTIFIER "YPF4"
-#define TARGET_CONFIG
-
-#define CONFIG_START_FLASH_ADDRESS (0x08080000) //0x08080000 to 0x080A0000 (FLASH_Sector_8)
 
 #define USBD_PRODUCT_STRING     "YupiF4"
 
@@ -52,6 +49,14 @@
 #define USE_GYRO_SPI_MPU6500
 #define GYRO_MPU6500_ALIGN      CW90_DEG
 
+#define USE_I2C
+#define I2C_DEVICE              (I2CDEV_1)
+
+#define MAG
+#define USE_MAG_HMC5883
+
+#define BARO
+#define USE_BARO_BMP280
 
 // Serial Ports
 #define USE_VCP
